@@ -41,11 +41,13 @@ var asteroidsSpeed = 1.5;
 var asteroids2Speed = 1.6;
 var speedsSpeed = 1.8;
 var slowsSpeed = 2;
+var helpersSpeed = 1.7;
 // optymalna ilość 1,  czym większa liczba tym więcej
 var asteroidsHowClose = 1;
-var asteroids2HowClose = 40;
-var speedsHowClose = 10;
+var asteroids2HowClose = 4;
+var speedsHowClose = 1;
 var slowsHowClose = 1;
+var helpersHowClose = 0.07;
 
 
 var backgroundSpeed;
@@ -75,6 +77,12 @@ var SlowClass = new Phaser.Class({
         Phaser.GameObjects.Image.call(this, scene, 0, 0, 'slow')
     }
 })
+var HelperClass = new Phaser.Class({
+    Extends: Phaser.GameObjects.Image,
+    initialize: function HelperClass(scene){
+        Phaser.GameObjects.Image.call(this, scene, 0, 0, 'helper')
+    }
+})
 
 //******************//
 //ładowanie zasobów//
@@ -100,6 +108,7 @@ function preload () {
     this.load.image('bullet', 'https://examples.phaser.io/assets/sprites/shmup-bullet.png');
     this.load.image('speed', 'https://examples.phaser.io/assets/sprites/loop.png');
     this.load.image('slow', 'https://examples.phaser.io/assets/sprites/pineapple.png');
+    this.load.image('helper', 'https://examples.phaser.io/assets/sprites/spinObj_04.png');
     this.load.spritesheet('explode', 'https://examples.phaser.io/assets/games/invaders/explode.png', {
         frameWidth: 128, frameHeight: 128
     });
@@ -137,9 +146,15 @@ function create () {
         runChildUpdate: true,
         allowGravity: false
     })
+    //tworzenie pomagaczy
+    this.helpers = this.physics.add.group({
+        classType: HelperClass,
+        runChildUpdate: true,
+        allowGravity: false
+    })
 
     //tworzenie tła gry
-    backgrnd = this.add.tileSprite(0, -30, 750, 450, 'backgrnd');
+    backgrnd = this.add.tileSprite(0, -30, 22750, 450, 'backgrnd');
     backgrnd.setOrigin(0)
 
     //tworzenie statku i eksplozji
@@ -208,7 +223,7 @@ function create () {
         }
     });
     //grupa z pociskami
-    bullets = this.add.group({
+    bullets = this.physics.add.group({
         classType: Bullet,
         maxSize: 5,
         runChildUpdate: true
@@ -226,71 +241,97 @@ function create () {
 //aktualizacja klatek//
 //*******************//
 
-var posX = 750
-function update (time, delta) {
+var posXAsteroids = 750;
+var posXAsteroids2 = 750;
+var posXSpeeds = 750;
+var posXSlows = 750;
+var posXHelpers = 750;
+var angle = 0;
+var sprite=0;
 
+function update (time, delta) {
+    backgrnd.x -=1;
+
+    //ship.angle += 1;
     //generowanie asteroid
     if((time)%3 == 0){
         if(time%6 == 0){
-            this.aster = this.asteroids.get().setActive(true).setVisible(true).setPosition(posX+100, game.config.height*(getRandom(0,10))/10).setScale(2,2);
+            this.aster = this.asteroids.get().setActive(true).setVisible(true).setPosition(posXAsteroids+100, game.config.height*(getRandom(0,10))/10).setScale(2,2);
         }
         else{
-            this.aster = this.asteroids.get().setActive(true).setVisible(true).setPosition(posX+100, game.config.height*(getRandom(0,10))/10).setScale(2,2);
+            this.aster = this.asteroids.get().setActive(true).setVisible(true).setPosition(posXAsteroids+100, game.config.height*(getRandom(0,10))/10).setScale(2,2);
         }
         //jak szybko latają 
         this.asteroids.setVelocityX(-200 * asteroidsSpeed);
         //jak blisko siebie mogą być asteroidy
-        posX+=100 / asteroidsHowClose;
+        posXAsteroids+=100 / asteroidsHowClose;
     }
-        //generowanie asteroid
-        if((time)%3 == 0){
-            if(time%2 == 0){
-                this.aster2 = this.asteroids2.get().setActive(true).setVisible(true).setPosition(posX+100, game.config.height*(getRandom(0,10))/10).setScale(1,1);
-            }
-            else{
-                this.aster2 = this.asteroids2.get().setActive(true).setVisible(true).setPosition(posX+100, game.config.height*(getRandom(0,10))/10).setScale(1,1);
-            }
-            //jak szybko latają 
-            this.asteroids2.setVelocityX(-200 * (asteroids2Speed+0.1));
-            //jak blisko siebie mogą być asteroidy
-            posX+=100 / asteroids2HowClose;
-        }
-
-    //generowanie przyspieszaczy
-    if((time)%6 == 0){
-        if(time%3 == 0){
-            this.speed = this.speeds.get().setActive(true).setVisible(true).setPosition(posX+100, game.config.height*(getRandom(0,10))/10).setScale(0.5,0.5)
+    //generowanie asteroid2
+    if((time)%3 == 0){
+        if(time%2 == 0){
+            this.aster2 = this.asteroids2.get().setActive(true).setVisible(true).setPosition(posXAsteroids2+100, game.config.height*(getRandom(0,10))/10).setScale(1,1);
         }
         else{
-            this.speed = this.speeds.get().setActive(true).setVisible(true).setPosition(posX+100, game.config.height*(getRandom(0,10))/10).setScale(0.5,0.5)
+            this.aster2 = this.asteroids2.get().setActive(true).setVisible(true).setPosition(posXAsteroids2+100, game.config.height*(getRandom(0,10))/10).setScale(1,1);
+        }
+        //jak szybko latają 
+        this.asteroids2.setVelocityX(-200 * (asteroids2Speed+0.1));
+        //jak blisko siebie mogą być asteroidy
+        posXAsteroids2+=100 / asteroids2HowClose;
+    }
+
+    //generowanie przyspieszaczy
+    if((time)%7 == 0){
+        if(time%3 == 0){
+            this.speed = this.speeds.get().setActive(true).setVisible(true).setPosition(posXSpeeds+100, game.config.height*(getRandom(0,10))/10).setScale(0.2,0.2)
+        }
+        else{
+            this.speed = this.speeds.get().setActive(true).setVisible(true).setPosition(posXSpeeds+100, game.config.height*(getRandom(0,10))/10).setScale(0.2,0.2)
         }
         //jak szybko latają 
         this.speeds.setVelocityX(-200 * speedsSpeed);
         //jak blisko siebie mogą być asteroidy
-        posX+=100 / speedsHowClose;
+        posXSpeeds+=100 / speedsHowClose;
     }
 
     //generowanie spowalniaczy
-    if((time)%6 == 0){
+    if((time)%4 == 0){
         if(time%3 == 0){
-            this.slow = this.slows.get().setActive(true).setVisible(true).setPosition(posX+100, game.config.height*(getRandom(0,10))/10).setScale(0.5,0.5)
+            this.slow = this.slows.get().setActive(true).setVisible(true).setPosition(posXSlows+100, game.config.height*(getRandom(0,10))/10).setScale(0.5,0.5)
         }
         else{
-            this.slow = this.slows.get().setActive(true).setVisible(true).setPosition(posX+100, game.config.height*(getRandom(0,10))/10).setScale(0.5,0.5)
+            this.slow = this.slows.get().setActive(true).setVisible(true).setPosition(posXSlows+100, game.config.height*(getRandom(0,10))/10).setScale(0.5,0.5)
         }
         //jak szybko latają 
         this.slows.setVelocityX(-200 * slowsSpeed);
         //jak blisko siebie mogą być asteroidy
-        posX+=100 / speedsHowClose;
+        posXSlows+=100 / speedsHowClose;
     }
 
+    //generowanie pomagaczy
+    if((time)%6 == 0){
+        if(time%3 == 0){
+            this.helper = this.helpers.get().setActive(true).setVisible(true).setPosition(posXHelpers+100, game.config.height*(getRandom(0,10))/10).setScale(0.2,0.2)
+        }
+        else{
+            this.helper = this.helpers.get().setActive(true).setVisible(true).setPosition(posXHelpers+100, game.config.height*(getRandom(0,10))/10).setScale(0.2,0.2)
+        }
+        //jak szybko latają 
+        this.helpers.setVelocityX(-200 * helpersSpeed);
+        //jak blisko siebie mogą być asteroidy
+        posXHelpers+=100 / helpersHowClose;
+    }
+
+    //this.helper.rotate(angle++);
     // zderzenia statku z asteroidą
     this.physics.add.overlap(ship, this.aster, shipHitsAsteroid, null, this);
     this.physics.add.overlap(ship, this.aster2, shipHitsAsteroid, null, this);
     // zderzenia statku z przyspieszaczem
     this.physics.add.overlap(ship, this.speed, shipHitsSpeed, null, this);
     // zderzenia statku z spowalniaczem
-    this.physics.add.overlap(ship, this.slow, shipHitsSlow, null, this);
+    this.physics.add.overlap(ship, this.helper, shipHitsSlow, null, this);
+    // zderzenia statku z pomagaczem
+    this.physics.add.overlap(ship, this.helper, shipHitsHelper, null, this);
 
     //Sterowanie statkiem za pomocą strzałek
     if(cursors.left.isDown){
@@ -308,7 +349,6 @@ function update (time, delta) {
     }
     if (cursors.space.isDown && time > lastFired){
         bullet = bullets.get();
-        console.log(bullet )
         if (bullet)
         {
             bullet.fire(ship.x, ship.y);  
@@ -330,19 +370,16 @@ function update (time, delta) {
     ]);
 
     //lekkie przyspieszanie asteroid z czasem
-    if(time%7 == 0){
-        asteroidsSpeed += 0.01;
-        asteroids2Speed += 0.01;
+    if(time%8 == 0){
+        asteroidsSpeed += 0.02;
+        asteroids2Speed += 0.02;
     }
-
-
-
 
     //todo nie łapie zderzeń
     this.physics.add.overlap(bullets, this.aster, bulletHitsAsteroid, null, this);
-    function bulletHitsAsteroid() {
-        console.log("trafiony")
-        this.aster.disableBody(true, true);
+    function bulletHitsAsteroid(b) {
+        console.log("trafiony");
+        b.kill();
     }
 }
  
@@ -372,6 +409,12 @@ function shipHitsSpeed() {
 function shipHitsSlow() {
     asteroidsSpeed -= 0.002;
     asteroids2Speed += 0.002;
+}
+
+//akcja podczas kolizji statku z pomagaczem
+function shipHitsHelper() {
+    asteroidsSpeed = 1.1;
+    asteroids2Speed = 1.1;
 }
 
 // losowanie liczb z zakresu
