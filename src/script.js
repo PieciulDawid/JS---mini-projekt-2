@@ -216,7 +216,7 @@ function create () {
 
 
     info = this.add.text(0, 0, 'Click to add objects', { fill: '#FFFFFF' });
-    scoreInfo = this.add.text(this.physics.world.bounds.centerX, this.physics.world.bounds.centerY + 20, 'Click to add objects', { fill: '#FFFFFF' });
+    scoreInfo = this.add.text(this.physics.world.bounds.centerX-5, this.physics.world.bounds.centerY + 20, 'Click to add objects', { fill: '#FFFFFF' });
     scoreInfo.visible = false;
 
 }
@@ -328,6 +328,16 @@ function update (time, delta) {
         'Bullets: ' + bullets.getTotalFree(),
         'Score: ' + score,
     ]);
+
+    //lekkie przyspieszanie asteroid z czasem
+    if(time%7 == 0){
+        asteroidsSpeed += 0.01;
+        asteroids2Speed += 0.01;
+    }
+
+
+
+
     //todo nie łapie zderzeń
     this.physics.add.overlap(bullets, this.aster, bulletHitsAsteroid, null, this);
     function bulletHitsAsteroid() {
