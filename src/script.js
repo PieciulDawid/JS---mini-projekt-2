@@ -23,6 +23,8 @@ var config = {
    };
    
 var game = new Phaser.Game(config);
+var endGame = false;
+var score;
 var cursors;
 var bullets; 
 var Bullet;
@@ -95,7 +97,7 @@ function preload () {
     this.load.image('backgrnd', 'https://examples.phaser.io/assets/games/invaders/starfield.png');
     this.load.image('asteroid', 'https://examples.phaser.io/assets/games/asteroids/asteroid1.png');
     this.load.image('asteroid2', 'https://examples.phaser.io/assets/games/asteroids/asteroid2.png');
-    this.load.image('bullet', 'https://examples.phaser.io/assets/sprites/bullet.png');
+    this.load.image('bullet', 'https://examples.phaser.io/assets/sprites/shmup-bullet.png');
     this.load.image('speed', 'https://examples.phaser.io/assets/sprites/loop.png');
     this.load.image('slow', 'https://examples.phaser.io/assets/sprites/pineapple.png');
     this.load.spritesheet('explode', 'https://examples.phaser.io/assets/games/invaders/explode.png', {
@@ -151,15 +153,25 @@ function create () {
     // tekst końca gry
     gameoverText = this.add.text(
         this.physics.world.bounds.centerX,
-        this.physics.world.bounds.centerY,
-        'GAME OVER',
-        {
+        this.physics.world.bounds.centerY-50,
+        'GAME OVER',{
         font: "40px Arial",
         fill: "#ffffff",
         align: "center"
         });
     gameoverText.setOrigin(0.5);
     gameoverText.visible = false;
+    gameoverText2 = this.add.text(
+        this.physics.world.bounds.centerX,
+        this.physics.world.bounds.centerY,
+        'Your score',{
+        font: "20px Arial",
+        fill: "#ffffff",
+        align: "center"
+        });
+    gameoverText2.setOrigin(0.5);
+    gameoverText2.visible = false;
+
        
     //animacja wybuchu
     this.anims.create({
@@ -204,6 +216,8 @@ function create () {
 
 
     info = this.add.text(0, 0, 'Click to add objects', { fill: '#FFFFFF' });
+    scoreInfo = this.add.text(this.physics.world.bounds.centerX, this.physics.world.bounds.centerY + 20, 'Click to add objects', { fill: '#FFFFFF' });
+    scoreInfo.visible = false;
 
 }
 
@@ -302,9 +316,17 @@ function update (time, delta) {
             lastFired = time + 50;
         }
     }
+
+    if(!endGame){
+        score = Math.round((time/1000))
+        scoreInfo.setText([
+            score
+        ]);
+    }
+
     info.setText([
         'Bullets: ' + bullets.getTotalFree(),
-        'Score: ' + Math.round((time/1000)),
+        'Score: ' + score,
     ]);
     //todo nie łapie zderzeń
     this.physics.add.overlap(bullets, this.aster, bulletHitsAsteroid, null, this);
@@ -320,9 +342,13 @@ function shipHitsAsteroid(ship) {
     ship.disableBody(true, true);
     boom.visible = true;
     boom.anims.play('boom', true);
+    endGame = true;
     setTimeout(function(){
     boom.visible = false;
     gameoverText.visible = true;
+    gameoverText2.visible = true;
+    info.visible = false;
+    scoreInfo.visible = true;
     }, 1000);
 }
 
