@@ -15,9 +15,12 @@ var config = {
    };
 var game = new Phaser.Game(config);
 var cursors;
+//optymalnna prędkosć 7, czym większa liczba tym szybciej 
 var shipSpeed = 7;
-var asteroidsSpeed = 1.3;
-var asteroidsDensity = 10;
+// optymalna prędkosć 1, czym większa liczba tym szybciej 
+var asteroidsSpeed = 1.5;
+// optymalna ilość 1,  czym większa liczba tym więcej
+var asteroidsHowClose = 1;
 var backgroundSpeed;
 var ship;
 var asteroids;
@@ -64,19 +67,28 @@ function create () {
 
     //tworzenie statku i eksplozji
     ship = this.physics.add.sprite(125, 150, 'ship');
-    boom = this.physics.add.sprite(125, 150, 'explode');
+
+    var shipCanvasX = ship.x - this.cameras.main.scrollX * ship.scrollFactorX;
+    var shipCanvasY = ship.y - this.cameras.main.scrollY * ship.scrollFactorY;
+    boom = this.physics.add.sprite(shipCanvasX, shipCanvasY, 'explode');
     boom.visible = false;
+
     ship.setCollideWorldBounds(true);
 
-    // asteroids = this.physics.add.staticGroup();
-    // asteroids.create(200, 240, 'asteroid1');
-    // asteroids.create(300, 190, 'asteroid1');
-    // asteroids.create(400, 140, 'asteroid1');
-    // asteroids.children.iterate((child) => {
-    //     child.setScale(1.3).setOrigin(0).refreshBody()
-    // })
+    // tekst końca gry
+    gameoverText = this.add.text(
+        this.physics.world.bounds.centerX,
+        this.physics.world.bounds.centerY,
+        'GAME OVER',
+        {
+        font: "40px Arial",
+        fill: "#ffffff",
+        align: "center"
+        });
+        gameoverText.setOrigin(0.5);
+        gameoverText.visible = false;
+       
 
-    //this.physics.add.collider(this.ship, this.asteroids, shipHitsAsteroid());
 
     // animacja wybuchu
     this.anims.create({
@@ -94,7 +106,7 @@ function create () {
 //aktualizacja klatek//
 //*******************//
 
-var posX = 1000
+var posX = 750
 function update (time) {
 
     //generowanie asteroid
@@ -108,17 +120,22 @@ function update (time) {
 
         //jak szybko latają 
         this.asteroids.setVelocityX(-200 * asteroidsSpeed);
-        //jak gęsto są asteroidy
-        posX+=100 / asteroidsDensity;
+        //jak blisko siebie mogą być asteroidy
+        posX+=100 / asteroidsHowClose;
     }
 
     
-
+    this.physics.add.collider(ship, this.aster, shipHitsAsteroid);
     //akcja podczas kolizji statku z asteroidą
     function shipHitsAsteroid(ship) {
+        //var shipCanvasX = ship.x - this.cameras.main.scrollX * ship.scrollFactorX;
+        //var shipCanvasY = ship.y - this.cameras.main.scrollY * ship.scrollFactorY;
+        boom.setPosition(ship.x, ship.y);
         ship.disableBody(true, true);
         boom.visible = true;
         boom.anims.play('boom', true);
+        gameoverText.visible = true;
+
     }
 
 
@@ -136,7 +153,6 @@ function update (time) {
         ship.y -= (1 * shipSpeed);
     }
 }
-
 
 // losowanie liczb z zakresu
 function getRandom(min, max) {
