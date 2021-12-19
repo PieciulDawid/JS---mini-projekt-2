@@ -1,3 +1,12 @@
+// import { CST } from
+// export class LoadScene extends Phaser.Scene{
+//     constructor(){
+//         super({
+//             key: CSSTransition.SCENES.LOAD
+//         })
+//     }
+// }
+
 var config = {
     type: Phaser.AUTO,
     width: 750,
@@ -13,8 +22,14 @@ var config = {
     }
 
    };
+   
 var game = new Phaser.Game(config);
 var cursors;
+var bullets;
+var lastFired = 0;
+var info;
+let backgrnd;
+var explosions;
 //optymalnna prędkosć 7, czym większa liczba tym szybciej 
 var shipSpeed = 7;
 // optymalna prędkosć 1, czym większa liczba tym szybciej 
@@ -37,13 +52,26 @@ var AsteroidClass = new Phaser.Class({
 //******************//
 
 function preload () {
+  //deklaracja paska ładowania
+    var loadinBar = this.add.graphics({
+        fillStyle: {
+            color: 0xffffff
+        }
+    })
+    //for()
+    this.load.on("progress", (percent)=>{
+        loadinBar.fillRect(0, this.game.renderer.heigh / 2, this.game.renderer.width * percent, 50);
+    })
+
     cursors = this.input.keyboard.createCursorKeys();
     this.load.image('ship', 'https://examples.phaser.io/assets/games/asteroids/ship.png');
     this.load.image('backgrnd', 'https://examples.phaser.io/assets/games/invaders/starfield.png');
     this.load.image('asteroid', 'https://examples.phaser.io/assets/games/asteroids/asteroid1.png');
+    this.load.image('bullet', 'https://examples.phaser.io/assets/sprites/bullet.png');
     this.load.spritesheet('explode', 'https://examples.phaser.io/assets/games/invaders/explode.png', {
         frameWidth: 128, frameHeight: 128
     });
+
 }
 
 
@@ -62,8 +90,8 @@ function create () {
     })
 
     //tworzenie tła gry
-    let back = this.add.tileSprite(0, -30, 750, 450, 'backgrnd');
-    back.setOrigin(0)
+    backgrnd = this.add.tileSprite(0, -30, 750, 450, 'backgrnd');
+    backgrnd.setOrigin(0)
 
     //tworzenie statku i eksplozji
     ship = this.physics.add.sprite(125, 150, 'ship');
@@ -85,11 +113,9 @@ function create () {
         fill: "#ffffff",
         align: "center"
         });
-        gameoverText.setOrigin(0.5);
-        gameoverText.visible = false;
+    gameoverText.setOrigin(0.5);
+    gameoverText.visible = false;
        
-
-
     // animacja wybuchu
     this.anims.create({
         key: 'boom',
@@ -99,6 +125,39 @@ function create () {
         frameRate: 15,
         repeat: 0
     })
+
+    //strzelanie
+    var Bullet = new Phaser.Class({
+        Extends: Phaser.GameObjects.Image,
+        initialize:
+        function Bullet (scene){
+            bullet = Phaser.GameObjects.Image.call(this, scene, 0, 0, 'bullet');
+            this.speed = Phaser.Math.GetSpeed(400, 1);
+        },
+
+        fire: function (x, y){
+            this.setPosition(x + 15, y);
+            this.setActive(true); 
+            this.setVisible(true);
+        },
+
+        // doładowanie pocisków
+        update: function (time, delta){
+            this.x += this.speed * delta;
+            if (this.x > 900){
+                this.setActive(false);
+                this.setVisible(false);
+            }
+        }
+    });
+    // grupa z pociskami
+    bullets = this.add.group({
+        classType: Bullet,
+        maxSize: 5,
+        runChildUpdate: true
+    });
+    info = this.add.text(0, 0, 'Click to add objects', { fill: '#FFFFFF' });
+
 }
 
 
@@ -107,7 +166,8 @@ function create () {
 //*******************//
 
 var posX = 750
-function update (time) {
+function update (time, delta) {
+    //backgrnd.x -= 2;
 
     //generowanie asteroid
     if((time)%3 == 0){
@@ -117,7 +177,6 @@ function update (time) {
         else{
             this.aster = this.asteroids.get().setActive(true).setVisible(true).setPosition(posX+100, game.config.height*(getRandom(0,10))/10).setScale(2,2);
         }
-
         //jak szybko latają 
         this.asteroids.setVelocityX(-200 * asteroidsSpeed);
         //jak blisko siebie mogą być asteroidy
@@ -125,19 +184,7 @@ function update (time) {
     }
 
     
-    this.physics.add.collider(ship, this.aster, shipHitsAsteroid);
-    //akcja podczas kolizji statku z asteroidą
-    function shipHitsAsteroid(ship) {
-        //var shipCanvasX = ship.x - this.cameras.main.scrollX * ship.scrollFactorX;
-        //var shipCanvasY = ship.y - this.cameras.main.scrollY * ship.scrollFactorY;
-        boom.setPosition(ship.x, ship.y);
-        ship.disableBody(true, true);
-        boom.visible = true;
-        boom.anims.play('boom', true);
-        gameoverText.visible = true;
-
-    }
-
+    this.physics.add.overlap(ship, this.aster, shipHitsAsteroid, null, this);
 
     //Sterowanie statkiem za pomocą strzałek
     if(cursors.left.isDown){
@@ -151,7 +198,41 @@ function update (time) {
     }
     if (cursors.up.isDown){
         ship.y -= (1 * shipSpeed);
+
     }
+    if (cursors.space.isDown && time > lastFired){
+        bullet = bullets.get();
+
+        if (bullet)
+        {
+            bullet.fire(ship.x, ship.y);  
+
+            lastFired = time + 50;
+        }
+    }
+    info.setText([
+        'Bullets: ' + bullets.getTotalFree(),
+        'Score: ' + Math.round((time/1000)),
+    ]);
+
+    this.physics.add.collider(bullets, this.aster, bulletHitsAsteroid);
+    function bulletHitsAsteroid() {
+        console.log("trafiony")
+        //this.aster.disableBody(true, true);
+
+    }
+}
+
+//akcja podczas kolizji statku z asteroidą
+function shipHitsAsteroid(ship, aster) {
+    boom.setPosition(ship.x, ship.y);
+    ship.disableBody(true, true);
+    //var explosion = explosions.getFirstExists(false);
+    //explosion.reset(ship.body.x, ship.body.y);
+    //explosion.play('explode', 30, false, true);
+    boom.visible = true;
+    boom.anims.play('boom', true);
+    gameoverText.visible = true;
 }
 
 // losowanie liczb z zakresu
