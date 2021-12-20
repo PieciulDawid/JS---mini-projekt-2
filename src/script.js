@@ -81,18 +81,36 @@ var SpeedClass = new Phaser.Class({
     Extends: Phaser.GameObjects.Image,
     initialize: function SpeedClass(scene){
         Phaser.GameObjects.Image.call(this, scene, 0, 0, 'speed')
+    },
+    kill: function ()
+    {
+        this.setActive(false);
+        this.setVisible(false);
+        this.body.stop();
     }
 })
 var SlowClass = new Phaser.Class({
     Extends: Phaser.GameObjects.Image,
     initialize: function SlowClass(scene){
         Phaser.GameObjects.Image.call(this, scene, 0, 0, 'slow')
+    },
+    kill: function ()
+    {
+        this.setActive(false);
+        this.setVisible(false);
+        this.body.stop();
     }
 })
 var HelperClass = new Phaser.Class({
     Extends: Phaser.GameObjects.Image,
     initialize: function HelperClass(scene){
         Phaser.GameObjects.Image.call(this, scene, 0, 0, 'helper')
+    },
+    kill: function ()
+    {
+        this.setActive(false);
+        this.setVisible(false);
+        this.body.stop();
     }
 })
 
@@ -118,7 +136,7 @@ function preload () {
     this.load.image('asteroid', 'https://examples.phaser.io/assets/games/asteroids/asteroid1.png');
     this.load.image('asteroid2', 'https://examples.phaser.io/assets/games/asteroids/asteroid2.png');
     this.load.image('bullet', 'https://examples.phaser.io/assets/sprites/shmup-bullet.png');
-    this.load.image('speed', 'https://examples.phaser.io/assets/sprites/loop.png');
+    this.load.image('speed', 'https://examples.phaser.io/assets/sprites/melon.png');
     this.load.image('slow', 'https://examples.phaser.io/assets/sprites/pineapple.png');
     this.load.image('helper', 'https://examples.phaser.io/assets/sprites/spinObj_04.png');
     this.load.spritesheet('explode', 'https://examples.phaser.io/assets/games/invaders/explode.png', {
@@ -203,6 +221,15 @@ function create () {
     //animacja wybuchu
     this.anims.create({
         key: 'boom',
+        frames: this.anims.generateFrameNumbers('explode', {
+            start: 0, end: 15
+        }),
+        frameRate: 15,
+        repeat: 0
+    })
+
+    this.anims.create({
+        key: 'miniBoom',
         frames: this.anims.generateFrameNumbers('explode', {
             start: 0, end: 15
         }),
@@ -301,10 +328,10 @@ function update (time, delta) {
     //generowanie przyspieszaczy
     if((time)%7 == 0){
         if(time%3 == 0){
-            this.speed = this.speeds.get().setActive(true).setVisible(true).setPosition(posXSpeeds+100, game.config.height*(getRandom(0,10))/10).setScale(0.2,0.2)
+            this.speed = this.speeds.get().setActive(true).setVisible(true).setPosition(posXSpeeds+100, game.config.height*(getRandom(0,10))/10).setScale(0.6,0.6)
         }
         else{
-            this.speed = this.speeds.get().setActive(true).setVisible(true).setPosition(posXSpeeds+100, game.config.height*(getRandom(0,10))/10).setScale(0.2,0.2)
+            this.speed = this.speeds.get().setActive(true).setVisible(true).setPosition(posXSpeeds+100, game.config.height*(getRandom(0,10))/10).setScale(0.6,0.6)
         }
         //jak szybko latają 
         this.speeds.setVelocityX(-200 * speedsSpeed);
@@ -398,16 +425,32 @@ function update (time, delta) {
 
     this.physics.add.overlap(bullets, this.aster2, bulletHitsAsteroid, checkBulletVsEnemy, this);
 
+    this.physics.add.overlap(ship, this.speed, shipHitsSpeedSlowHelper, checkBulletVsEnemy, this);
+
+    this.physics.add.overlap(ship, this.slow, shipHitsSpeedSlowHelper, checkBulletVsEnemy, this);
+
+    this.physics.add.overlap(ship, this.helper, shipHitsSpeedSlowHelper, checkBulletVsEnemy, this);
 
 }
 function checkBulletVsEnemy (bullet, enemy)
 {
     return (bullet.active && enemy.active);
 }
+
 function bulletHitsAsteroid(b,e) {
+        boom.setPosition(e.x, e.y);
+        boom.visible = true;
+        boom.anims.play('miniboom', true).setScale(0.5,0.5);
+        setTimeout(function(){
+            boom.visible = false;
+            }, 1000);
         e.kill()
         b.kill()
 
+}
+
+function shipHitsSpeedSlowHelper(b,e) {
+    e.kill()
 }
 
 //akcja podczas kolizji statku z asteroidą
@@ -415,7 +458,7 @@ function shipHitsAsteroid(ship) {
     boom.setPosition(ship.x, ship.y);
     ship.disableBody(true, true);
     boom.visible = true;
-    boom.anims.play('boom', true);
+    boom.anims.play('boom', true).setScale(1,1);
     endGame = true;
     setTimeout(function(){
     boom.visible = false;
