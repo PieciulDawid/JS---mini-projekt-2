@@ -1,9 +1,7 @@
-import {CST} from "./CST";
+// import {CST} from "./CST.js";
 export class MenuScene extends Pharser.Scene{
     constructor(){
-        super({
-            key: CST.SCENES.MENU
-        })
+        super("LOAD")
     }
     inti(data){
         console.log(data)

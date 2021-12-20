@@ -1,17 +1,20 @@
-import {CST} from "./CST";
-export class LoadScene extends Pharser.Scene{
+// import {CST} from "./CST.js";
+class LoadScene extends Phaser.Scene{
     constructor(){
-        super({
-            key: CST.SCENES.LOAD
-        })
+        super(
+            "LOAD"
+        )
     }
-    inti(){
+    init(){
 
     }
     preload(){
 
     }
     create(){
-        this.scene.start(CST.SCENES.MENU, "hello")
+        console.log("1")
+        this.add.text(0,0,"hello")
     }
 }
+
+export { LoadScene }
