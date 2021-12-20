@@ -195,6 +195,9 @@ function create () {
 
     ship.setCollideWorldBounds(true);
 
+
+    // ship.body.bounce.setTo(0.0,.0)
+
     // tekst końca gry
     gameoverText = this.add.text(
         this.physics.world.bounds.centerX,
@@ -255,10 +258,12 @@ function create () {
         // doładowanie pocisków
         update: function (time, delta){
             this.x += this.speed * delta;
-            if (this.x > 900){
+            if (this.x > 800){
                 this.setActive(false);
                 this.setVisible(false);
             }
+
+
         },
         kill: function ()
         {
@@ -324,6 +329,9 @@ function update (time, delta) {
         //jak blisko siebie mogą być asteroidy
         posXAsteroids2+=100 / asteroids2HowClose;
     }
+
+    //listenery na usuwanie po lewej stronie planszy
+    console.log(this.asteroids2)
 
     //generowanie przyspieszaczy
     if((time)%7 == 0){
