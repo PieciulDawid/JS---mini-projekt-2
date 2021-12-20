@@ -1,7 +1,7 @@
 // import {CST} from "./CST.js";
-export class MenuScene extends Pharser.Scene{
+export class MenuScene extends Phaser.Scene{
     constructor(){
-        super("LOAD")
+        super("MAIN")
     }
     inti(data){
         console.log(data)
@@ -10,6 +10,8 @@ export class MenuScene extends Pharser.Scene{
 
     }
     create(){
-
+        let text = this.add.text(0,0,"TADAAA")
+        text.setFontSize(60)
     }
 }
+// export { MenuScene }
