@@ -142,6 +142,9 @@ function preload () {
     this.load.spritesheet('explode', 'https://examples.phaser.io/assets/games/invaders/explode.png', {
         frameWidth: 128, frameHeight: 128
     });
+    this.load.spritesheet('explode2', 'https://examples.phaser.io/assets/games/invaders/explode.png', {
+        frameWidth: 128, frameHeight: 128
+    });
 
 }
 
@@ -193,6 +196,9 @@ function create () {
     boom = this.physics.add.sprite(1, 1, 'explode');
     boom.visible = false;
 
+    boom2 = this.physics.add.sprite(1, 1, 'explode2');
+    boom2.visible = false;
+
     ship.setCollideWorldBounds(true);
 
 
@@ -233,7 +239,7 @@ function create () {
 
     this.anims.create({
         key: 'miniBoom',
-        frames: this.anims.generateFrameNumbers('explode', {
+        frames: this.anims.generateFrameNumbers('explode2', {
             start: 0, end: 15
         }),
         frameRate: 15,
@@ -331,7 +337,7 @@ function update (time, delta) {
     }
 
     //listenery na usuwanie po lewej stronie planszy
-    console.log(this.asteroids2)
+    //console.log(this.asteroids2)
 
     //generowanie przyspieszaczy
     if((time)%7 == 0){
@@ -382,7 +388,7 @@ function update (time, delta) {
     // zderzenia statku z przyspieszaczem
     this.physics.add.overlap(ship, this.speed, shipHitsSpeed, null, this);
     // zderzenia statku z spowalniaczem
-    this.physics.add.overlap(ship, this.helper, shipHitsSlow, null, this);
+    this.physics.add.overlap(ship, this.slow, shipHitsSlow, null, this);
     // zderzenia statku z pomagaczem
     this.physics.add.overlap(ship, this.helper, shipHitsHelper, null, this);
 
@@ -424,8 +430,8 @@ function update (time, delta) {
 
     //lekkie przyspieszanie asteroid z czasem
     if(time%8 == 0){
-        asteroidsSpeed += 0.02;
-        asteroids2Speed += 0.02;
+        asteroidsSpeed += 0.04;
+        asteroids2Speed += 0.04;
     }
 
     //todo nie łapie zderzeń
@@ -446,11 +452,11 @@ function checkBulletVsEnemy (bullet, enemy)
 }
 
 function bulletHitsAsteroid(b,e) {
-        boom.setPosition(e.x, e.y);
-        boom.visible = true;
-        boom.anims.play('miniboom', true).setScale(0.5,0.5);
+        boom2.setPosition(e.x, e.y);
+        boom2.visible = true;
+        boom2.anims.play('miniBoom', true).setScale(0.5,0.5);
         setTimeout(function(){
-            boom.visible = false;
+            boom2.visible = false;
             }, 1000);
         e.kill()
         b.kill()
@@ -479,14 +485,14 @@ function shipHitsAsteroid(ship) {
 
 //akcja podczas kolizji statku z przyspieszaczem
 function shipHitsSpeed() {
-    asteroidsSpeed += 0.002;
-    asteroids2Speed -= 0.002;
+    asteroidsSpeed += 0.0002;
+    asteroids2Speed -= 0.0002;
 }
 
 //akcja podczas kolizji statku z przyspieszaczem
 function shipHitsSlow() {
-    asteroidsSpeed -= 0.002;
-    asteroids2Speed += 0.002;
+    asteroidsSpeed -= 0.0002;
+    asteroids2Speed += 0.0002;
 }
 
 //akcja podczas kolizji statku z pomagaczem
