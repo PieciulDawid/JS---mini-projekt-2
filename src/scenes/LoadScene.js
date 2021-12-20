@@ -19,7 +19,7 @@ export class LoadScene extends Phaser.Scene{
     }
     update(){
         this.a+=1
-        if(this.a>100)
-        this.scene.start("MAIN")
+        if(this.a>300)
+            this.scene.start("MAIN")
     }
 }

@@ -3,7 +3,7 @@ export class MenuScene extends Phaser.Scene{
     constructor(){
         super("MAIN")
     }
-    inti(data){
+    init(data){
         console.log(data)
     }
     preload(){
@@ -14,4 +14,3 @@ export class MenuScene extends Phaser.Scene{
         text.setFontSize(60)
     }
 }
-// export { MenuScene }
