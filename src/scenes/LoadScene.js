@@ -5,7 +5,7 @@ export class LoadScene extends Pharser.Scene{
             key: CST.SCENES.LOAD
         })
     }
-    inti(){
+    in(){
 
     }
     preload(){

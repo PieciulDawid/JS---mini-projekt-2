@@ -33,7 +33,7 @@ var info;
 let backgrnd;
 var explosions;
 //optymalnna prędkosć 7, czym większa liczba tym szybciej 
-var shipSpeed = 7;
+var shipSpeed = 2;
 
 
 // optymalna prędkosć 1, czym większa liczba tym szybciej 
@@ -57,13 +57,25 @@ var AsteroidClass = new Phaser.Class({
     Extends: Phaser.GameObjects.Image,
     initialize: function AsteroidClass(scene){
         Phaser.GameObjects.Image.call(this, scene, 0, 0, 'asteroid')
-    }
+    },
+    kill: function ()
+        {
+            this.setActive(false);
+            this.setVisible(false);
+            this.body.stop();
+        }
 })
 var Asteroid2Class = new Phaser.Class({
     Extends: Phaser.GameObjects.Image,
     initialize: function Asteroid2Class(scene){
         Phaser.GameObjects.Image.call(this, scene, 0, 0, 'asteroid2')
-    }
+    },
+    kill: function ()
+        {
+            this.setActive(false);
+            this.setVisible(false);
+            this.body.stop();
+        }
 })
 var SpeedClass = new Phaser.Class({
     Extends: Phaser.GameObjects.Image,
@@ -220,6 +232,12 @@ function create () {
                 this.setActive(false);
                 this.setVisible(false);
             }
+        },
+        kill: function ()
+        {
+            this.setActive(false);
+            this.setVisible(false);
+            this.body.stop();
         }
     });
     //grupa z pociskami
@@ -376,13 +394,22 @@ function update (time, delta) {
     }
 
     //todo nie łapie zderzeń
-    this.physics.add.overlap(bullets, this.aster, bulletHitsAsteroid, null, this);
-    function bulletHitsAsteroid(b) {
-        console.log("trafiony");
-        b.kill();
-    }
+    this.physics.add.overlap(bullets, this.aster, bulletHitsAsteroid, checkBulletVsEnemy, this);
+
+    this.physics.add.overlap(bullets, this.aster2, bulletHitsAsteroid, checkBulletVsEnemy, this);
+
+
 }
- 
+function checkBulletVsEnemy (bullet, enemy)
+{
+    return (bullet.active && enemy.active);
+}
+function bulletHitsAsteroid(b,e) {
+        e.kill()
+        b.kill()
+
+}
+
 //akcja podczas kolizji statku z asteroidą
 function shipHitsAsteroid(ship) {
     boom.setPosition(ship.x, ship.y);
