@@ -43,6 +43,9 @@ var posXHelpers;
 var angle;
 var sprite;
 var playButton;
+var endLevelScore;
+var nextLevelText;
+var nextLevelButton;
 
 export class Level1 extends Phaser.Scene{
     constructor(){
@@ -51,6 +54,7 @@ export class Level1 extends Phaser.Scene{
         })
     }
     init(){
+        endLevelScore = 100;
         score = 0;
         endGame = false;
         lastFired = 0;
@@ -226,6 +230,17 @@ create () {
     gameoverText2.setOrigin(0.5);
     gameoverText2.visible = false;
 
+    nextLevelText = this.add.text(
+        this.physics.world.bounds.centerX,
+        this.physics.world.bounds.centerY-50,
+        'GOOD JOB',{
+        font: "40px Arial",
+        fill: "#ffffff",
+        align: "center"
+        });
+    nextLevelText.setOrigin(0.5);
+    nextLevelText.visible = false;
+
        
     //animacje wybuchu
     this.anims.create({
@@ -283,7 +298,7 @@ create () {
 
     //napis z iloscią pocisków i  ilością punktów
     info = this.add.text(0, 0, '', { fill: '#FFFFFF' });
-    scoreInfo = this.add.text(this.physics.world.bounds.centerX-5, this.physics.world.bounds.centerY + 20, '', { fill: '#FFFFFF' });
+    scoreInfo = this.add.text(this.physics.world.bounds.centerX-18, this.physics.world.bounds.centerY + 20, '', { fill: '#FFFFFF' });
     scoreInfo.visible = false;
 
 
@@ -294,6 +309,14 @@ create () {
     playButton.on("pointerdown", ()=> {
        this.scene.start(CST.SCENES.MENU);
     });
+
+    nextLevelButton = this.add.text(this.game.renderer.width / 2.37,220,"< NEXT LEVEL >").setFontSize(15);
+    nextLevelButton.visible = false; 
+    nextLevelButton.setInteractive();
+    nextLevelButton.on("pointerdown", ()=> {
+       this.scene.start(CST.SCENES.MENU);
+    });
+
 
 }
 
@@ -418,9 +441,11 @@ update (time, delta) {
             scoreRound
         ]);
     }
-    // if(endGame2){
-    //     this.scene.start(CST.SCENES.MENU);
-    // }
+    if(score > endLevelScore){
+        score = 0;
+        endLevel();
+    }
+
 
     info.setText([
         'Bullets: ' + bullets.getTotalFree(),
@@ -481,9 +506,22 @@ function shipHitsAsteroid(ship) {
     gameoverText2.visible = true;
     info.visible = false;
     scoreInfo.visible = true;
-    endGame2 = true;
     playButton.visible = true;
     }, 1000);
+}
+
+function endLevel(){
+    boom.setPosition(375, 175);
+    ship.disableBody(true, true);
+    boom.visible = true;
+    boom.anims.play('boom', true).setScale(4,4);
+    setTimeout(function(){
+    boom.visible = false;
+    info.visible = false;
+    nextLevelText.visible = true;
+    nextLevelButton.visible = true;
+    }, 1000);
+
 }
 
 //akcja podczas kolizji statku z przyspieszaczem
