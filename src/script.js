@@ -1,12 +1,3 @@
-// import { CST } from
-// export class LoadScene extends Phaser.Scene{
-//     constructor(){
-//         super({
-//             key: CSSTransition.SCENES.LOAD
-//         })
-//     }
-// }
-
 var config = {
     type: Phaser.AUTO,
     width: 750,

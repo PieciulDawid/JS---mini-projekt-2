@@ -12,18 +12,20 @@ export class LoadScene extends Phaser.Scene{
     }
     preload(){
 
-            this.load.image('ship', 'https://examples.phaser.io/assets/games/asteroids/ship.png');
-            this.load.image('backgrnd', 'https://examples.phaser.io/assets/games/invaders/starfield.png');
-            this.load.image('asteroid', 'https://examples.phaser.io/assets/games/asteroids/asteroid1.png');
-            this.load.image('asteroid2', 'https://examples.phaser.io/assets/games/asteroids/asteroid2.png');
-            this.load.image('bullet', 'https://examples.phaser.io/assets/sprites/shmup-bullet.png');
-            this.load.image('speed', 'https://examples.phaser.io/assets/sprites/loop.png');
-            this.load.image('slow', 'https://examples.phaser.io/assets/sprites/pineapple.png');
-            this.load.image('helper', 'https://examples.phaser.io/assets/sprites/spinObj_04.png');
-            this.load.spritesheet('explode', 'https://examples.phaser.io/assets/games/invaders/explode.png', {
-                frameWidth: 128, frameHeight: 128
-            });
-        console.log("Log")
+        this.load.image('ship', 'https://examples.phaser.io/assets/games/asteroids/ship.png');
+        this.load.image('backgrnd', 'https://examples.phaser.io/assets/games/invaders/starfield.png');
+        this.load.image('asteroid', 'https://examples.phaser.io/assets/games/asteroids/asteroid1.png');
+        this.load.image('asteroid2', 'https://examples.phaser.io/assets/games/asteroids/asteroid2.png');
+        this.load.image('bullet', 'https://examples.phaser.io/assets/sprites/shmup-bullet.png');
+        this.load.image('speed', 'https://examples.phaser.io/assets/sprites/melon.png');
+        this.load.image('slow', 'https://examples.phaser.io/assets/sprites/pineapple.png');
+        this.load.image('helper', 'https://examples.phaser.io/assets/sprites/spinObj_04.png');
+        this.load.spritesheet('explode', 'https://examples.phaser.io/assets/games/invaders/explode.png', {
+            frameWidth: 128, frameHeight: 128
+        });
+        this.load.spritesheet('explode2', 'https://examples.phaser.io/assets/games/invaders/explode.png', {
+            frameWidth: 128, frameHeight: 128
+        });
         let loadingBar = this.add.graphics({
             fillStyle: {
                 color: 0xffffff //white
@@ -38,9 +40,6 @@ export class LoadScene extends Phaser.Scene{
 
     }
     create(){
-        //this.a+=1
-        //if(this.a>300)  
-        
         this.scene.start(CST.SCENES.MENU);
     }
 }
