@@ -1,5 +1,5 @@
-import { LoadScene } from './scenes/loadScene.js';
-import { MenuScene } from './scenes/menuScene.js';
+import { LoadScene } from './scenes/LoadScene.js';
+import { MenuScene } from './scenes/MenuScene.js';
 
 let game = new Phaser.Game({
     width: 750,
