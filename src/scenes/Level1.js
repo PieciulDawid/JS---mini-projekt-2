@@ -1,12 +1,11 @@
 import {CST} from "../CST.js";
   
-//var game = new Phaser.Game(config);
-var endGame = false;
+var endGame;
 var score;
 var cursors;
 var bullets; 
 var Bullet;
-var lastFired = 0;
+var lastFired;
 var info;
 let backgrnd;
 var explosions;
@@ -16,95 +15,34 @@ var gameoverText;
 var gameoverText2;
 var scoreInfo;
 var bullet;
-//optymalnna prędkosć 7, czym większa liczba tym szybciej 
-var shipSpeed = 2;
-
-
-// optymalna prędkosć 1, czym większa liczba tym szybciej 
-var asteroidsSpeed = 1.5;
-var asteroids2Speed = 1.6;
-var speedsSpeed = 1.8;
-var slowsSpeed = 2;
-var helpersSpeed = 1.7;
-// optymalna ilość 1,  czym większa liczba tym więcej
-var asteroidsHowClose = 1;
-var asteroids2HowClose = 4;
-var speedsHowClose = 1;
-var slowsHowClose = 1;
-var helpersHowClose = 0.07;
-
-
+var endGame2;
+var shipSpeed;
+var asteroidsSpeed;
+var asteroids2Speed;
+var speedsSpeed;
+var slowsSpeed;
+var helpersSpeed;
+var asteroidsHowClose;
+var asteroids2HowClose;
+var speedsHowClose;
+var slowsHowClose;
+var helpersHowClose;
 var backgroundSpeed;
 var ship;
 var asteroids;
-var AsteroidClass = new Phaser.Class({
-    Extends: Phaser.GameObjects.Image,
-    initialize: function AsteroidClass(scene){
-        Phaser.GameObjects.Image.call(this, scene, 0, 0, 'asteroid')
-    },
-    kill: function ()
-        {
-            this.setActive(false);
-            this.setVisible(false);
-            this.body.stop();
-        }
-})
-var Asteroid2Class = new Phaser.Class({
-    Extends: Phaser.GameObjects.Image,
-    initialize: function Asteroid2Class(scene){
-        Phaser.GameObjects.Image.call(this, scene, 0, 0, 'asteroid2')
-    },
-    kill: function ()
-        {
-            this.setActive(false);
-            this.setVisible(false);
-            this.body.stop();
-        }
-})
-var SpeedClass = new Phaser.Class({
-    Extends: Phaser.GameObjects.Image,
-    initialize: function SpeedClass(scene){
-        Phaser.GameObjects.Image.call(this, scene, 0, 0, 'speed')
-    },
-    kill: function ()
-    {
-        this.setActive(false);
-        this.setVisible(false);
-        this.body.stop();
-    }
-})
-var SlowClass = new Phaser.Class({
-    Extends: Phaser.GameObjects.Image,
-    initialize: function SlowClass(scene){
-        Phaser.GameObjects.Image.call(this, scene, 0, 0, 'slow')
-    },
-    kill: function ()
-    {
-        this.setActive(false);
-        this.setVisible(false);
-        this.body.stop();
-    }
-})
-var HelperClass = new Phaser.Class({
-    Extends: Phaser.GameObjects.Image,
-    initialize: function HelperClass(scene){
-        Phaser.GameObjects.Image.call(this, scene, 0, 0, 'helper')
-    },
-    kill: function ()
-    {
-        this.setActive(false);
-        this.setVisible(false);
-        this.body.stop();
-    }
-})
-var posXAsteroids = 750;
-var posXAsteroids2 = 750;
-var posXSpeeds = 750;
-var posXSlows = 750;
-var posXHelpers = 750;
-var angle = 0;
-var sprite=0;
-
+var AsteroidClass;
+var Asteroid2Class;
+var SpeedClass;
+var SlowClass;
+var HelperClass;
+var posXAsteroids;
+var posXAsteroids2;
+var posXSpeeds;
+var posXSlows;
+var posXHelpers;
+var angle;
+var sprite;
+var playButton;
 
 export class Level1 extends Phaser.Scene{
     constructor(){
@@ -113,41 +51,115 @@ export class Level1 extends Phaser.Scene{
         })
     }
     init(){
+        score = 0;
+        endGame = false;
+        lastFired = 0;
+        endGame2 = false;
+        //optymalnna prędkosć 3, czym większa liczba tym szybciej 
+        shipSpeed = 2;
+        // optymalna prędkosć 1, czym większa liczba tym szybciej 
+        asteroidsSpeed = 1.5;
+        asteroids2Speed = 1.6;
+        speedsSpeed = 1.8;
+        slowsSpeed = 2;
+        helpersSpeed = 1.7;
+        // optymalna ilość 1,  czym większa liczba tym więcej
+        asteroidsHowClose = 1;
+        asteroids2HowClose = 4;
+        speedsHowClose = 1;
+        slowsHowClose = 1;
+        helpersHowClose = 0.07;
 
+        AsteroidClass = new Phaser.Class({
+            Extends: Phaser.GameObjects.Image,
+            initialize: function AsteroidClass(scene){
+                Phaser.GameObjects.Image.call(this, scene, 0, 0, 'asteroid')
+            },
+            kill: function ()
+                {
+                    this.setActive(false);
+                    this.setVisible(false);
+                    this.body.stop();
+                }
+        })
+        Asteroid2Class = new Phaser.Class({
+            Extends: Phaser.GameObjects.Image,
+            initialize: function Asteroid2Class(scene){
+                Phaser.GameObjects.Image.call(this, scene, 0, 0, 'asteroid2')
+            },
+            kill: function ()
+                {
+                    this.setActive(false);
+                    this.setVisible(false);
+                    this.body.stop();
+                }
+        })
+        SpeedClass = new Phaser.Class({
+            Extends: Phaser.GameObjects.Image,
+            initialize: function SpeedClass(scene){
+                Phaser.GameObjects.Image.call(this, scene, 0, 0, 'speed')
+            },
+            kill: function ()
+            {
+                this.setActive(false);
+                this.setVisible(false);
+                this.body.stop();
+            }
+        })
+        SlowClass = new Phaser.Class({
+            Extends: Phaser.GameObjects.Image,
+            initialize: function SlowClass(scene){
+                Phaser.GameObjects.Image.call(this, scene, 0, 0, 'slow')
+            },
+            kill: function ()
+            {
+                this.setActive(false);
+                this.setVisible(false);
+                this.body.stop();
+            }
+        })
+        HelperClass = new Phaser.Class({
+            Extends: Phaser.GameObjects.Image,
+            initialize: function HelperClass(scene){
+                Phaser.GameObjects.Image.call(this, scene, 0, 0, 'helper')
+            },
+            kill: function ()
+            {
+                this.setActive(false);
+                this.setVisible(false);
+                this.body.stop();
+            }
+        })
+        posXAsteroids = 750;
+        posXAsteroids2 = 750;
+        posXSpeeds = 750;
+        posXSlows = 750;
+        posXHelpers = 750;
+        angle = 0;
+        sprite = 0;
     }
     preload () {
-        //deklaracja paska ładowania
-          var loadinBar = this.add.graphics({
-              fillStyle: {
-                  color: 0xffffff
-              }
-          })
-          //for()
-          this.load.on("progress", (percent)=>{
-              loadinBar.fillRect(0, this.game.renderer.heigh / 2, this.game.renderer.width * percent, 50);
-          })
-      
           cursors = this.input.keyboard.createCursorKeys();
-        //   this.load.image('ship', 'https://examples.phaser.io/assets/games/asteroids/ship.png');
-        //   this.load.image('backgrnd', 'https://examples.phaser.io/assets/games/invaders/starfield.png');
-        //   this.load.image('asteroid', 'https://examples.phaser.io/assets/games/asteroids/asteroid1.png');
-        //   this.load.image('asteroid2', 'https://examples.phaser.io/assets/games/asteroids/asteroid2.png');
-        //   this.load.image('bullet', 'https://examples.phaser.io/assets/sprites/shmup-bullet.png');
-        //   this.load.image('speed', 'https://examples.phaser.io/assets/sprites/melon.png');
-        //   this.load.image('slow', 'https://examples.phaser.io/assets/sprites/pineapple.png');
-        //   this.load.image('helper', 'https://examples.phaser.io/assets/sprites/spinObj_04.png');
-        //   this.load.spritesheet('explode', 'https://examples.phaser.io/assets/games/invaders/explode.png', {
-        //       frameWidth: 128, frameHeight: 128
-        //   });
-        //   this.load.spritesheet('explode2', 'https://examples.phaser.io/assets/games/invaders/explode.png', {
-        //       frameWidth: 128, frameHeight: 128
-        //   });
-      
+          this.load.image('ship', 'https://examples.phaser.io/assets/games/asteroids/ship.png');
+          this.load.image('backgrnd', 'https://examples.phaser.io/assets/games/invaders/starfield.png');
+          this.load.image('asteroid', 'https://examples.phaser.io/assets/games/asteroids/asteroid1.png');
+          this.load.image('asteroid2', 'https://examples.phaser.io/assets/games/asteroids/asteroid2.png');
+          this.load.image('bullet', 'https://examples.phaser.io/assets/sprites/shmup-bullet.png');
+          this.load.image('speed', 'https://examples.phaser.io/assets/sprites/melon.png');
+          this.load.image('slow', 'https://examples.phaser.io/assets/sprites/pineapple.png');
+          this.load.image('helper', 'https://examples.phaser.io/assets/sprites/spinObj_04.png');
+          this.load.spritesheet('explode', 'https://examples.phaser.io/assets/games/invaders/explode.png', {
+              frameWidth: 128, frameHeight: 128
+          });
+          this.load.spritesheet('explode2', 'https://examples.phaser.io/assets/games/invaders/explode.png', {
+              frameWidth: 128, frameHeight: 128
+          });
+    
       }
+
 //**********************//
 //tworzenie obiektów gry//
 //**********************//
-
 create () {
 
     //tworzenie grupy asteroid
@@ -186,17 +198,11 @@ create () {
 
     //tworzenie statku i eksplozji
     ship = this.physics.add.sprite(125, 150, 'ship');
-
     boom = this.physics.add.sprite(1, 1, 'explode');
     boom.visible = false;
-
     boom2 = this.physics.add.sprite(1, 1, 'explode2');
     boom2.visible = false;
-
     ship.setCollideWorldBounds(true);
-
-
-    // ship.body.bounce.setTo(0.0,.0)
 
     // tekst końca gry
     gameoverText = this.add.text(
@@ -221,7 +227,7 @@ create () {
     gameoverText2.visible = false;
 
        
-    //animacja wybuchu
+    //animacje wybuchu
     this.anims.create({
         key: 'boom',
         frames: this.anims.generateFrameNumbers('explode', {
@@ -230,7 +236,6 @@ create () {
         frameRate: 15,
         repeat: 0
     })
-
     this.anims.create({
         key: 'miniBoom',
         frames: this.anims.generateFrameNumbers('explode2', {
@@ -254,7 +259,6 @@ create () {
             this.setActive(true); 
             this.setVisible(true);
         },
-
         // doładowanie pocisków
         update: function (time, delta){
             this.x += this.speed * delta;
@@ -262,8 +266,6 @@ create () {
                 this.setActive(false);
                 this.setVisible(false);
             }
-
-
         },
         kill: function ()
         {
@@ -279,10 +281,19 @@ create () {
         runChildUpdate: true
     });
 
-
-    info = this.add.text(0, 0, 'Click to add objects', { fill: '#FFFFFF' });
-    scoreInfo = this.add.text(this.physics.world.bounds.centerX-5, this.physics.world.bounds.centerY + 20, 'Click to add objects', { fill: '#FFFFFF' });
+    //napis z iloscią pocisków i  ilością punktów
+    info = this.add.text(0, 0, '', { fill: '#FFFFFF' });
+    scoreInfo = this.add.text(this.physics.world.bounds.centerX-5, this.physics.world.bounds.centerY + 20, '', { fill: '#FFFFFF' });
     scoreInfo.visible = false;
+
+
+
+    playButton = this.add.text(this.game.renderer.width / 2.2,240,"< MENU >").setFontSize(15);
+    playButton.visible = false; 
+    playButton.setInteractive();
+    playButton.on("pointerdown", ()=> {
+       this.scene.start(CST.SCENES.MENU);
+    });
 
 }
 
@@ -401,17 +412,19 @@ update (time, delta) {
             lastFired = time + 50;
         }
     }
-
+    let scoreRound = Math.round(score)
     if(!endGame){
-        score = Math.round((time/1000))
         scoreInfo.setText([
-            score
+            scoreRound
         ]);
     }
+    // if(endGame2){
+    //     this.scene.start(CST.SCENES.MENU);
+    // }
 
     info.setText([
         'Bullets: ' + bullets.getTotalFree(),
-        'Score: ' + score,
+        'Score: ' + scoreRound,
     ]);
 
     //lekkie przyspieszanie asteroid z czasem
@@ -468,23 +481,28 @@ function shipHitsAsteroid(ship) {
     gameoverText2.visible = true;
     info.visible = false;
     scoreInfo.visible = true;
+    endGame2 = true;
+    playButton.visible = true;
     }, 1000);
 }
 
 //akcja podczas kolizji statku z przyspieszaczem
 function shipHitsSpeed() {
+    score+=0.1;
     asteroidsSpeed += 0.0002;
     asteroids2Speed -= 0.0002;
 }
 
 //akcja podczas kolizji statku z przyspieszaczem
 function shipHitsSlow() {
+    score+=0.1;
     asteroidsSpeed -= 0.0002;
     asteroids2Speed += 0.0002;
 }
 
 //akcja podczas kolizji statku z pomagaczem
 function shipHitsHelper() {
+    score+=0.01;
     asteroidsSpeed = 1.1;
     asteroids2Speed = 1.1;
 }
