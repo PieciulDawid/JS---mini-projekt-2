@@ -337,7 +337,7 @@ create () {
     playButton.visible = false; 
     playButton.setInteractive();
     playButton.on("pointerdown", ()=> {
-       this.scene.start(CST.SCENES.LEVELBONUS);
+       this.scene.start(CST.SCENES.MENU);
     });
 
     nextLevelButton = this.add.text(this.game.renderer.width / 2.4,220,"< BONUS LEVEL >").setFontSize(15);
