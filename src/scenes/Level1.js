@@ -56,25 +56,29 @@ export class Level1 extends Phaser.Scene{
         })
     }
     init(){
-        endLevelScore = 100;
+        //*******************************************************//
+        //*                     Parametry                       *//
+        //*******************************************************//
+        //ilośc punktów do zbobycia aby przejść poziom 
+        endLevelScore = 1000;
         score = 100;
-        endGame = false;
-        lastFired = 0;
-        endGame2 = false;
+        nextLevelButton = null;
+        nextLevelButton2 = null;
         //optymalnna prędkosć 3, czym większa liczba tym szybciej 
-        shipSpeed = 2;
+        shipSpeed = 3;
         // optymalna prędkosć 1, czym większa liczba tym szybciej 
-        asteroidsSpeed = 1.5;
-        asteroids2Speed = 1.6;
-        speedsSpeed = 1.8;
-        slowsSpeed = 2;
-        helpersSpeed = 1.7;
+        asteroidsSpeed = 1;
+        asteroids2Speed = 1;
+        speedsSpeed = 1.2;
+        slowsSpeed = 1.3;
+        helpersSpeed = 1.4;
         // optymalna ilość 1,  czym większa liczba tym więcej
-        asteroidsHowClose = 1;
-        asteroids2HowClose = 4;
+        asteroidsHowClose = 0.5;
+        asteroids2HowClose = 1;
         speedsHowClose = 1;
         slowsHowClose = 1;
         helpersHowClose = 0.07;
+        //*******************************************************//
 
         AsteroidClass = new Phaser.Class({
             Extends: Phaser.GameObjects.Image,
@@ -136,6 +140,9 @@ export class Level1 extends Phaser.Scene{
                 this.body.stop();
             }
         })
+        endGame = false;
+        lastFired = 0;
+        endGame2 = false;
         posXAsteroids = 750;
         posXAsteroids2 = 750;
         posXSpeeds = 750;
@@ -293,7 +300,7 @@ create () {
         // doładowanie pocisków
         update: function (time, delta){
             this.x += this.speed * delta;
-            if (this.x > 800){
+            if (this.x > 1000){
                 this.setActive(false);
                 this.setVisible(false);
             }
@@ -308,12 +315,12 @@ create () {
     //grupa z pociskami
     bullets = this.physics.add.group({
         classType: Bullet,
-        maxSize: 5,
+        maxSize: 10,
         runChildUpdate: true
     });
 
     //napis z iloscią pocisków i  ilością punktów
-    info = this.add.text(0, 0, '', { fill: '#FFFFFF' });
+    info = this.add.text(10, 10, '', { fill: '#FFFFFF' });
 
     playButton = this.add.text(this.game.renderer.width / 2.2,220,"< MENU >").setFontSize(15);
     playButton.visible = false; 
@@ -445,7 +452,7 @@ update (time, delta) {
         ship.y -= (1 * shipSpeed);
 
     }
-    if (cursors.space.isDown && time > lastFired){
+    if (cursors.space.isDown && time > lastFired && !endGame){
         bullet = bullets.get();
         if (bullet)
         {
@@ -456,14 +463,13 @@ update (time, delta) {
     }
     let scoreRound = Math.round(score)
     if(score < 0){
-        score = 100;
+        score = 0.001;
         endLevel();
     }
 
-
     info.setText([
-        'Bullets: ' + bullets.getTotalFree(),
-        'Score: ' + scoreRound,
+        'Points left | ' + scoreRound,
+        '    Bullets | ' + bullets.getTotalFree(),
     ]);
 
     //lekkie przyspieszanie asteroid z czasem
@@ -514,6 +520,7 @@ function shipHitsAsteroid(ship) {
     boom.visible = true;
     boom.anims.play('boom', true).setScale(1,1);
     endGame = true;
+    endGame2 = true;
     setTimeout(function(){
     boom.visible = false;
     gameoverText.visible = true;
@@ -558,8 +565,8 @@ function shipHitsSlow() {
 //akcja podczas kolizji statku z pomagaczem
 function shipHitsHelper() {
     score-=0.01;
-    asteroidsSpeed = 1.1;
-    asteroids2Speed = 1.1;
+    asteroidsSpeed = 0.8;
+    asteroids2Speed = 0.8;
 }
 
 // losowanie liczb z zakresu

@@ -1,6 +1,7 @@
 import {CST} from "../CST.js";
 
 var image;
+var cursors;
 export class MenuScene extends Phaser.Scene{
     constructor(){
         super({
@@ -12,6 +13,7 @@ export class MenuScene extends Phaser.Scene{
     }
     preload(){
 
+        cursors = this.input.keyboard.createCursorKeys();
         this.load.image('backgrnd3', 'https://examples.phaser.io/assets/virtualjoystick/starfield2.jpg');
     
     }
@@ -31,6 +33,9 @@ export class MenuScene extends Phaser.Scene{
         });
     }
     update(){
+        if(cursors.space.isDown){
+            this.scene.start(CST.SCENES. LEVEL1);
+        }
         image.rotation += 0.001;
     }
 }
