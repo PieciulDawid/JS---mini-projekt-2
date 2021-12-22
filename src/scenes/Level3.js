@@ -5,6 +5,8 @@ var score;
 var cursors;
 var bullets; 
 var Bullet;
+var bullets2; 
+var Bullet2;
 var lastFired;
 var info;
 let backgrnd;
@@ -12,7 +14,10 @@ var explosions;
 var boom;
 var boom2
 var gameoverText;
+var gameoverText2;
+var scoreInfo;
 var bullet;
+var bullet2;
 var endGame2;
 var shipSpeed;
 var asteroidsSpeed;
@@ -44,15 +49,11 @@ var playButton;
 var endLevelScore;
 var nextLevelText;
 var nextLevelButton;
-var wifu;
-var cloud;
-var nextLevelText2;
-var nextLevelButton2;
 
-export class Level1 extends Phaser.Scene{
+export class Level3 extends Phaser.Scene{
     constructor(){
         super({
-            key: CST.SCENES.LEVEL1
+            key: CST.SCENES.LEVEL3
         })
     }
     init(){
@@ -146,22 +147,22 @@ export class Level1 extends Phaser.Scene{
     }
     preload () {
           cursors = this.input.keyboard.createCursorKeys();
-          this.load.image('ship', 'https://examples.phaser.io/assets/games/asteroids/ship.png');
-          this.load.image('backgrnd', 'https://examples.phaser.io/assets/games/invaders/starfield.png');
+          this.load.image('ship2', 'https://examples.phaser.io/assets/sprites/plane.png');
+          this.load.image('backgrnd2', 'https://examples.phaser.io/assets/textures/tron.png');
           this.load.image('asteroid', 'https://examples.phaser.io/assets/games/asteroids/asteroid1.png');
           this.load.image('asteroid2', 'https://examples.phaser.io/assets/games/asteroids/asteroid2.png');
           this.load.image('bullet', 'https://examples.phaser.io/assets/sprites/shmup-bullet.png');
+          this.load.image('bullet2', 'https://examples.phaser.io/assets/bullets/bullet27.png');
           this.load.image('speed', 'https://examples.phaser.io/assets/sprites/melon.png');
           this.load.image('slow', 'https://examples.phaser.io/assets/sprites/pineapple.png');
           this.load.image('helper', 'https://examples.phaser.io/assets/sprites/spinObj_04.png');
-          this.load.image('wifu', 'https://examples.phaser.io/assets/pics/contra1.png');
-          this.load.image('cloud', 'https://examples.phaser.io/assets/particlestorm/cloud.png');
           this.load.spritesheet('explode', 'https://examples.phaser.io/assets/games/invaders/explode.png', {
               frameWidth: 128, frameHeight: 128
           });
           this.load.spritesheet('explode2', 'https://examples.phaser.io/assets/games/invaders/explode.png', {
               frameWidth: 128, frameHeight: 128
           });
+    
       }
 
 //**********************//
@@ -200,27 +201,17 @@ create () {
     })
 
     //tworzenie tła gry
-    backgrnd = this.add.tileSprite(0, -30, 22750, 450, 'backgrnd');
+    backgrnd = this.add.tileSprite(0, -30, 22750, 450, 'backgrnd2');
     backgrnd.setOrigin(0)
 
     //tworzenie statku i eksplozji
-    ship = this.physics.add.sprite(125, 150, 'ship');
+    ship = this.physics.add.sprite(125, 150, 'ship2');
     boom = this.physics.add.sprite(1, 1, 'explode');
     boom.visible = false;
     boom2 = this.physics.add.sprite(1, 1, 'explode2');
     boom2.visible = false;
+    ship.setScale(0.9,0.9);
     ship.setCollideWorldBounds(true);
-
-
-    //dodanie wifu
-    wifu = this.physics.add.sprite(650, 220, 'wifu');
-    wifu.setScale(1.6,1.6)
-    wifu.visible = false;
-
-    //dodanie chmury 
-    cloud = this.physics.add.sprite(400, 80, 'cloud');
-    cloud.setScale(1,1)
-    cloud.visible = false;
 
     // tekst końca gry
     gameoverText = this.add.text(
@@ -234,28 +225,16 @@ create () {
     gameoverText.setOrigin(0.5);
     gameoverText.visible = false;
 
-
     nextLevelText = this.add.text(
-        this.physics.world.bounds.centerX-40, 
-        this.physics.world.bounds.centerY-80,
+        this.physics.world.bounds.centerX,
+        this.physics.world.bounds.centerY-50,
         'GOOD JOB',{
-        font: "30px Arial",
-        fill: "#000000",
+        font: "40px Arial",
+        fill: "#ffffff",
         align: "center"
         });
     nextLevelText.setOrigin(0.5);
     nextLevelText.visible = false;
-
-    nextLevelText2 = this.add.text(
-        this.physics.world.bounds.centerX-35,
-        this.physics.world.bounds.centerY-58,
-        'Where do you want to go next?',{
-        font: "13px Arial",
-        fill: "#000000",
-        align: "center"
-        });
-    nextLevelText2.setOrigin(0.5);
-    nextLevelText2.visible = false;
 
        
     //animacje wybuchu
@@ -305,37 +284,68 @@ create () {
             this.body.stop();
         }
     });
+
+    Bullet2 = new Phaser.Class({
+        Extends: Phaser.GameObjects.Image,
+        initialize:
+        function Bullet (scene){
+            bullet2 = Phaser.GameObjects.Image.call(this, scene, 0, 0, 'bullet2');
+            this.speed = Phaser.Math.GetSpeed(400, 1);
+        },
+
+        fire: function (x, y){
+            this.setPosition(x + 15, y);
+            this.setActive(true); 
+            this.setVisible(true);
+        },
+        // doładowanie pocisków
+        update: function (time, delta){
+            this.x += this.speed * delta;
+            if (this.x > 800){
+                this.setActive(false);
+                this.setVisible(false);
+            }
+        },
+        kill: function ()
+        {
+            this.setActive(false);
+            this.setVisible(false);
+            this.body.stop();
+        }
+    });
     //grupa z pociskami
     bullets = this.physics.add.group({
         classType: Bullet,
         maxSize: 5,
         runChildUpdate: true
     });
+    //grupa z pociskami2
+    bullets2 = this.physics.add.group({
+        classType: Bullet2,
+        maxSize: 5,
+        runChildUpdate: true
+    });
 
     //napis z iloscią pocisków i  ilością punktów
     info = this.add.text(0, 0, '', { fill: '#FFFFFF' });
+    scoreInfo = this.add.text(this.physics.world.bounds.centerX-18, this.physics.world.bounds.centerY + 20, '', { fill: '#FFFFFF' });
+    scoreInfo.visible = false;
 
-    playButton = this.add.text(this.game.renderer.width / 2.2,190,"< MENU >").setFontSize(15);
+
+
+    playButton = this.add.text(this.game.renderer.width / 2.2,240,"< MENU >").setFontSize(15);
     playButton.visible = false; 
     playButton.setInteractive();
     playButton.on("pointerdown", ()=> {
-       this.scene.start(CST.SCENES.MENU);
+       this.scene.start(CST.SCENES.LEVELBONUS);
     });
 
-    nextLevelButton = this.add.text(this.game.renderer.width / 2,220,"< LAVA LAND >").setFontSize(15);
+    nextLevelButton = this.add.text(this.game.renderer.width / 2.4,220,"< BONUS LEVEL >").setFontSize(15);
     nextLevelButton.visible = false; 
     nextLevelButton.setInteractive();
     nextLevelButton.on("pointerdown", ()=> {
-       this.scene.start(CST.SCENES.LEVEL2);
+       this.scene.start(CST.SCENES.LEVELBONUS);
     });
-
-    nextLevelButton2 = this.add.text(this.game.renderer.width / 4,220,"< GREEN LAND >").setFontSize(15);
-    nextLevelButton2.visible = false; 
-    nextLevelButton2.setInteractive();
-    nextLevelButton2.on("pointerdown", ()=> {
-       this.scene.start(CST.SCENES.LEVEL3);
-    });
-
 
 }
 
@@ -454,7 +464,21 @@ update (time, delta) {
             lastFired = time + 50;
         }
     }
+    if (cursors.shift.isDown && time > lastFired){
+        bullet2 = bullets2.get();
+        if (bullet2)
+        {
+            bullet2.fire(ship.x, ship.y);  
+
+            lastFired = time + 50;
+        }
+    }
     let scoreRound = Math.round(score)
+    if(!endGame){
+        scoreInfo.setText([
+            scoreRound
+        ]);
+    }
     if(score < 0){
         score = 100;
         endLevel();
@@ -475,7 +499,7 @@ update (time, delta) {
     //todo nie łapie zderzeń
     this.physics.add.overlap(bullets, this.aster, bulletHitsAsteroid, checkBulletVsEnemy, this);
 
-    this.physics.add.overlap(bullets, this.aster2, bulletHitsAsteroid, checkBulletVsEnemy, this);
+    this.physics.add.overlap(bullets2, this.aster2, bulletHitsAsteroid, checkBulletVsEnemy, this);
 
     this.physics.add.overlap(ship, this.speed, shipHitsSpeedSlowHelper, checkBulletVsEnemy, this);
 
@@ -500,7 +524,6 @@ function bulletHitsAsteroid(b,e) {
             }, 1000);
         e.kill()
         b.kill()
-
 }
 
 function shipHitsSpeedSlowHelper(b,e) {
@@ -517,7 +540,6 @@ function shipHitsAsteroid(ship) {
     setTimeout(function(){
     boom.visible = false;
     gameoverText.visible = true;
-    info.visible = false;
     playButton.visible = true;
     }, 1000);
 }
@@ -532,10 +554,6 @@ function endLevel(){
     info.visible = false;
     nextLevelText.visible = true;
     nextLevelButton.visible = true;
-    nextLevelButton2.visible = true;
-    nextLevelText2.visible = true;
-    cloud.visible = true;
-    wifu.visible = true;
     }, 1000);
 
 }

@@ -12,12 +12,12 @@ export class MenuScene extends Phaser.Scene{
     }
     preload(){
 
-        this.load.image('backgrnd', 'https://examples.phaser.io/assets/games/invaders/starfield.png');
+        this.load.image('backgrnd3', 'https://examples.phaser.io/assets/virtualjoystick/starfield2.jpg');
     
     }
 
     create(){
-        image = this.add.image(this.game.renderer.width / 2, this.game.renderer.height, "backgrnd").setScale(2,2)
+        image = this.add.image(this.game.renderer.width / 2, this.game.renderer.height, "backgrnd3").setScale(2,2)
 
         let text = this.add.text(this.game.renderer.width / 3.2,100,"SHQOTNIG").setFontSize(60)
 
@@ -27,7 +27,7 @@ export class MenuScene extends Phaser.Scene{
         playButton.setInteractive();
 
         playButton.on("pointerdown", ()=> {
-           this.scene.start(CST.SCENES.LEVEL1);
+           this.scene.start(CST.SCENES.LEVELBONUS);
         });
     }
     update(){
