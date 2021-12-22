@@ -60,8 +60,8 @@ export class Level1 extends Phaser.Scene{
         //*                     Parametry                       *//
         //*******************************************************//
         //ilośc punktów do zbobycia aby przejść poziom 
-        endLevelScore = 1000;
-        score = 100;
+        endLevelScore = 10;
+        score = 10;
         nextLevelButton = null;
         nextLevelButton2 = null;
         //optymalnna prędkosć 3, czym większa liczba tym szybciej 
@@ -332,14 +332,18 @@ create () {
     nextLevelButton = this.add.text(this.game.renderer.width / 2,220,"< LAVA LAND >").setFontSize(15);
     nextLevelButton.visible = false; 
     nextLevelButton.setInteractive();
-    nextLevelButton.on("pointerdown", ()=> {
+    nextLevelButton.on("pointerdown", (a)=> {
+        console.log(a)
+        console.log("lava - level2")
        this.scene.start(CST.SCENES.LEVEL2);
     });
 
     nextLevelButton2 = this.add.text(this.game.renderer.width / 4,220,"< GREEN SPACE >").setFontSize(15);
     nextLevelButton2.visible = false; 
     nextLevelButton2.setInteractive();
-    nextLevelButton2.on("pointerdown", ()=> {
+    nextLevelButton2.on("pointerdown", (a)=> {
+        console.log(a)
+        console.log("green - level3")
        this.scene.start(CST.SCENES.LEVEL3);
     });
 

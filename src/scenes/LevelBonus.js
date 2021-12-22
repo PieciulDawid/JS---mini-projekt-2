@@ -486,7 +486,7 @@ update (time, delta) {
         ship.y -= (1 * shipSpeed);
 
     }
-    if (cursors.space.isDown && time > lastFired){
+    if (cursors.space.isDown && time > lastFired && !endGame){
         bullet = bullets.get();
         if (bullet)
         {
@@ -496,7 +496,7 @@ update (time, delta) {
             lastFired = time + 50;
         }
     }
-    if (cursors.shift.isDown && time > lastFired){
+    if (cursors.shift.isDown && time > lastFired && !endGame){
         bullet2 = bullets2.get();
         if (bullet2)
         {

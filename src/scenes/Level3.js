@@ -479,9 +479,6 @@ update (time, delta) {
             lastFired2 = time + 100;
         }
     }
-    if (cursors.space.isDown && endGame){
-
-    }
     let scoreRound = Math.round(score)
     if(!endGame){
         scoreInfo.setText([
