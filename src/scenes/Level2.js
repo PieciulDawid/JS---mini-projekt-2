@@ -359,7 +359,7 @@ update (time, delta) {
 
     //ship.angle += 1;
     //generowanie asteroid
-    if((time)%3 == 0){
+    if((time)%3 == 0 && !endGame){
         if(time%6 == 0){
             this.aster = this.asteroids.get().setActive(true).setVisible(true).setPosition(posXAsteroids+100, this.game.config.height*(getRandom(0,10))/10).setScale(2,2);
         }
@@ -372,7 +372,7 @@ update (time, delta) {
         posXAsteroids+=100 / asteroidsHowClose;
     }
     //generowanie asteroid2
-    if((time)%3 == 0){
+    if((time)%3 == 0 && !endGame){
         if(time%2 == 0){
             this.aster2 = this.asteroids2.get().setActive(true).setVisible(true).setPosition(posXAsteroids2+100, this.game.config.height*(getRandom(0,10))/10).setScale(1,1);
         }
@@ -389,7 +389,7 @@ update (time, delta) {
     //console.log(this.asteroids2)
 
     //generowanie przyspieszaczy
-    if((time)%7 == 0){
+    if((time)%7 == 0 && !endGame){
         if(time%3 == 0){
             this.speed = this.speeds.get().setActive(true).setVisible(true).setPosition(posXSpeeds+100, this.game.config.height*(getRandom(0,10))/10).setScale(0.6,0.6)
         }
@@ -403,7 +403,7 @@ update (time, delta) {
     }
 
     //generowanie spowalniaczy
-    if((time)%4 == 0){
+    if((time)%4 == 0 && !endGame){
         if(time%3 == 0){
             this.slow = this.slows.get().setActive(true).setVisible(true).setPosition(posXSlows+100, this.game.config.height*(getRandom(0,10))/10).setScale(0.5,0.5)
         }
@@ -417,7 +417,7 @@ update (time, delta) {
     }
 
     //generowanie pomagaczy
-    if((time)%6 == 0){
+    if((time)%6 == 0 && !endGame){
         if(time%3 == 0){
             this.helper = this.helpers.get().setActive(true).setVisible(true).setPosition(posXHelpers+100, this.game.config.height*(getRandom(0,10))/10).setScale(0.2,0.2)
         }
@@ -535,6 +535,7 @@ function shipHitsAsteroid(ship) {
     boom.setPosition(ship.x, ship.y);
     ship.disableBody(true, true);
     boom.visible = true;
+    endGame = true;
     boom.anims.play('boom', true).setScale(1,1);
     endGame = true;
     setTimeout(function(){

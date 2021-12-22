@@ -27,7 +27,7 @@ export class MenuScene extends Phaser.Scene{
         playButton.setInteractive();
 
         playButton.on("pointerdown", ()=> {
-           this.scene.start(CST.SCENES.LEVELBONUS);
+           this.scene.start(CST.SCENES. LEVEL1);
         });
     }
     update(){
